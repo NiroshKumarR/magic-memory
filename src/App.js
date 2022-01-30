@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import SingleCard from "./components/SingleCard.js";
 const cardImages = [
-  { src: "/img/helmet-1.png" },
-  { src: "/img/potion-1.png" },
-  { src: "/img/ring-1.png" },
-  { src: "/img/scroll-1.png" },
-  { src: "/img/shield-1.png" },
-  { src: "/img/sword-1.png" },
+  { src: "/img/helmet-1.png", matched: false },
+  { src: "/img/potion-1.png", matched: false },
+  { src: "/img/ring-1.png", matched: false },
+  { src: "/img/scroll-1.png", matched: false },
+  { src: "/img/shield-1.png", matched: false },
+  { src: "/img/sword-1.png", matched: false },
 ];
 
 function App() {
@@ -26,8 +26,33 @@ function App() {
   };
   const handleCardClick = (id) => {
     choice1 ? setChoice2(id) : setChoice1(id);
-    console.log(choice1, choice2);
   };
+
+  const resetTurn = () => {
+    setChoice1(null);
+    setChoice2(null);
+    setTurn(turn + 1);
+  };
+  useEffect(() => {
+    if (choice1 && choice2) {
+      if (choice1.src === choice2.src) {
+        setCards((prevCards) => {
+          return prevCards.map((card) => {
+            if (card.src === choice1.src) {
+              return { ...card, matched: true };
+            } else {
+              return card;
+            }
+          });
+        });
+        resetTurn();
+      } else {
+        console.log("Its not a match");
+        resetTurn();
+      }
+    }
+  }, [choice1, choice2]);
+
   return (
     <div className="App">
       <h1>Magic Match</h1>
